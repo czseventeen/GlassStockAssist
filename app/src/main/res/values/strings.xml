@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">GlassStockAssist</string>
+    <string name="title_activity_live_stock_service">Stock Assist</string>
+    <string name="action_stop">Stop</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="WelcomeTitle">Here are you stocks</string>
+    <string name="StockName">Stock Name</string>
+
+    <string name="action_add">Add</string>
+    <string name="action_delete">Delete</string>
+    <string name="glass_voice_trigger">Check my Stocks</string>
+</resources>
