@@ -94,12 +94,14 @@ public class RemoveActivity extends Activity {
         mCardScrollerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "Clicked view at position " + position + ", row-id " + id);
-                int soundEffect = Sounds.TAP;
-
+                Log.d(TAG, "Clicked view at position " + position + "Removing "+stocklist.get(position).getmSymbol());
+                LiveStockService.removeStockItem(position);
                 // Play sound.
+                int soundEffect = Sounds.TAP;
                 AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 am.playSoundEffect(soundEffect);
+                //finish();
+
             }
         });
     }

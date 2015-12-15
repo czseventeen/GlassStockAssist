@@ -41,7 +41,7 @@ public class LiveStockService extends Service {
     private static final int KEY_UPDATE_PRICE=1;
 
     //below is the timer for interrupt
-    private static final long UPDATE_RATE = 1000;
+    private static final long UPDATE_RATE = 10000;
     //Below are the updater used to update the remoteView every second
     private final Handler mHandler = new Handler();
     private final UpdateLiveCardRunnable mUpdateLiveCardRunnable =
@@ -67,8 +67,11 @@ public class LiveStockService extends Service {
             mLiveCard.setViews(mRemoteViews);
 
             // Display the options menu when the live card is tapped.
+
             Intent menuIntent = new Intent(this, LiveCardMenuActivity.class);
-            mLiveCard.setAction(PendingIntent.getActivity(this, 0, menuIntent, 0));
+            menuIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            mLiveCard.setAction(PendingIntent.getActivity(this, 1, menuIntent, 0));
+            mLiveCard.setVoiceActionEnabled(true);
             mLiveCard.publish(PublishMode.REVEAL);
 
             // Queue the update text runnable
@@ -88,12 +91,7 @@ public class LiveStockService extends Service {
 
                 double LastPrice = (Math.round(stock.getmLastPrice() * 100)) / 100;
                 mRemoteViews.setTextViewText(PriceTextViewIDList.get(i), "" + LastPrice);
-                //Mocking the Raise/Down color scheme
-                if (LastPrice >= 20) {
-                    mRemoteViews.setTextColor(PriceTextViewIDList.get(i), Color.RED);
-                } else {
-                    mRemoteViews.setTextColor(PriceTextViewIDList.get(i), Color.GREEN);
-                }
+                mRemoteViews.setTextColor(PriceTextViewIDList.get(i), Color.GREEN);
                 mRemoteViews.setTextViewText(SymbolTextViewIDList.get(i), stock.getmSymbol());
                 i++;
             }
