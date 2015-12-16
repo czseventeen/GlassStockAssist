@@ -13,7 +13,6 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import jayxu.com.glassstockassist.Model.Stocks;
@@ -27,26 +26,31 @@ public class LiveStockService extends Service {
     private static final String LIVE_CARD_TAG = "LiveStockService";
 
     public static LiveCard mLiveCard;
-    RemoteViews mRemoteViews;
-    private static final int MAX_NUM_STOCKS=4;
+    protected static RemoteViews mRemoteViews;
+    protected static final int MAX_NUM_STOCKS=4;
 
     public static ArrayList<Stocks> StockList=new ArrayList<>();
-    private ArrayList<Integer> PriceTextViewIDList=new ArrayList<>();
-    private ArrayList<Integer> SymbolTextViewIDList=new ArrayList<>();
+    private static ArrayList<Integer> PriceTextViewIDList=new ArrayList<>();
+    private static ArrayList<Integer> SymbolTextViewIDList=new ArrayList<>();
 
 
 
     //Below are code used to indicate whether to initiliaize the remoteview or just update the Prices;
     private static final int KEY_USING_NEW_STOCKS =0;
     private static final int KEY_UPDATE_PRICE=1;
+    private static final int KEY_REMOVE_ITEM =2 ;
+    private static final int KEY_ADD_STOCK = 3;
+
 
     //below is the timer for interrupt
     private static final long UPDATE_RATE = 10000;
     //Below are the updater used to update the remoteView every second
-    private final Handler mHandler = new Handler();
+    private static final Handler mHandler = new Handler();
     private final UpdateLiveCardRunnable mUpdateLiveCardRunnable =
             new UpdateLiveCardRunnable();
 
+    //below is used for checking whether the user is removing an item
+    public static boolean isAddingOrRemoving =false;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -71,49 +75,54 @@ public class LiveStockService extends Service {
             Intent menuIntent = new Intent(this, LiveCardMenuActivity.class);
             menuIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             mLiveCard.setAction(PendingIntent.getActivity(this, 1, menuIntent, 0));
-            mLiveCard.setVoiceActionEnabled(true);
+            //mLiveCard.setVoiceActionEnabled(true);
             mLiveCard.publish(PublishMode.REVEAL);
 
             // Queue the update text runnable
             mHandler.post(mUpdateLiveCardRunnable);
-            startForeground(startId,new Notification());
+            // The startForeground was suppose to keep the Service from being killed, don't have to now
+//           startForeground(startId,new Notification());
         } else {
             mLiveCard.navigate();
         }
         return START_STICKY;
     }
 
-    private void updateRemoteView(int code) {
+    private static void updateRemoteView(int code) {
         int i=0;
-        if(code== KEY_USING_NEW_STOCKS) {
-            //Initialize new stock objects
-            for (Stocks stock:StockList) {
-
-                double LastPrice = (Math.round(stock.getmLastPrice() * 100)) / 100;
-                mRemoteViews.setTextViewText(PriceTextViewIDList.get(i), "" + LastPrice);
-                mRemoteViews.setTextColor(PriceTextViewIDList.get(i), Color.GREEN);
-                mRemoteViews.setTextViewText(SymbolTextViewIDList.get(i), stock.getmSymbol());
-                i++;
-            }
-
-        }else if(code == KEY_UPDATE_PRICE){
-            //just update the existing stocks' price
-            for (Stocks stock:StockList) {
-                double OldPrice = stock.getmLastPrice();
-                double NewPrice = (Math.round(stock.SetAndGetNewRandomStockPrice()* 100.0)) / 100.0;
-                mRemoteViews.setTextViewText(PriceTextViewIDList.get(i), "" + NewPrice);
-                //Mocking the Raise/Down color scheme
-                if (NewPrice >= OldPrice) {
-                    mRemoteViews.setTextColor(PriceTextViewIDList.get(i), Color.GREEN);
-                } else {
-                    mRemoteViews.setTextColor(PriceTextViewIDList.get(i), Color.RED);
-                }
-                i++;
-            }
+        if(StockList.size()==0){
+            //There are no stocks in the watchlist , tell the user so.
+            mRemoteViews.setTextViewText(R.id.CardTitle, "You aren't watching any stocks");
         }
+
+        for (Stocks stock:StockList) {
+           //Only allowing maximum of 4 items to be displayed.
+           if(i>=4){
+               continue;
+           }
+            //store the old price value for comparison
+            double OldPrice = stock.getmLastPrice();
+            //Randomly generate a new price
+            double NewPrice = (Math.round(stock.SetAndGetNewRandomStockPrice()* 100.0)) / 100.0;
+            //print the new Price
+            mRemoteViews.setTextViewText(PriceTextViewIDList.get(i), "" + NewPrice);
+            //Change the color of the Price based on Price change
+            if (NewPrice >= OldPrice) {
+                mRemoteViews.setTextColor(PriceTextViewIDList.get(i), Color.GREEN);
+            } else {
+                mRemoteViews.setTextColor(PriceTextViewIDList.get(i), Color.RED);
+            }
+            //If adding new/removing stock from the list, repopulate the list
+            if(code==KEY_USING_NEW_STOCKS || code==KEY_ADD_STOCK || code ==KEY_REMOVE_ITEM){
+                mRemoteViews.setTextViewText(SymbolTextViewIDList.get(i), stock.getmSymbol());
+            }
+
+            i++;
+        }
+
     }
 
-    private void initializeTextViewIDLists() {
+    private static void initializeTextViewIDLists() {
         PriceTextViewIDList.add(R.id.PriceText1);
         PriceTextViewIDList.add(R.id.PriceText2);
         PriceTextViewIDList.add(R.id.PriceText3);
@@ -130,14 +139,15 @@ public class LiveStockService extends Service {
 
     private void initializeRandomStockList() {
         for(int i=0; i<MAX_NUM_STOCKS; i++){
-            Stocks stock=new Stocks(-1);
+            // use the random constructor to randomly generate a stock
+            Stocks stock=new Stocks(null,Stocks.KEY_GENERATE_RANDOM_STOCK);
             StockList.add(stock);
         }
     }
 
     @Override
     public void onDestroy() {
-        if (mLiveCard != null && mLiveCard.isPublished()) {
+        if (mLiveCard != null && mLiveCard.isPublished() && !isAddingOrRemoving) {
             mUpdateLiveCardRunnable.setStop(true);
             mLiveCard.unpublish();
             mLiveCard = null;
@@ -181,5 +191,28 @@ public class LiveStockService extends Service {
 
     public static void removeStockItem(int i){
            StockList.remove(i);
+        // update the mRemoteView with the latest StockList items
+        updateRemoteView(KEY_REMOVE_ITEM);
+        //Set the last item in the stocklist to be null
+        mRemoteViews.setTextViewText(PriceTextViewIDList.get(StockList.size()), "");
+        mRemoteViews.setTextViewText(SymbolTextViewIDList.get(StockList.size()), "");
+        // Always call setViews() to update the live card's RemoteViews.
+        mLiveCard.setViews(mRemoteViews);
+
+    }
+    public static void addStockItem(Stocks stock){
+        StockList.add(stock);
+        // update the mRemoteView with the latest StockList items
+        updateRemoteView(KEY_ADD_STOCK);
+        // Always call setViews() to update the live card's RemoteViews.
+        mLiveCard.setViews(mRemoteViews);
+
+    }
+
+    public static void AddingOrRemovingItem(){
+        isAddingOrRemoving =true;
+    }
+    public static void doneAddingOrRemovingItem(){
+        isAddingOrRemoving =false;
     }
 }

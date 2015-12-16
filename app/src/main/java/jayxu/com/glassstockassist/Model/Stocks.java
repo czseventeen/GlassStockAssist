@@ -6,6 +6,7 @@ import java.util.Random;
  * Created by Yuchen on 12/13/2015.
  */
 public class Stocks {
+    public static final int KEY_GENERATE_RANDOM_STOCK = -1;
     private double mLastPrice;
     private String mName;
     private String mSymbol;
@@ -55,17 +56,24 @@ public class Stocks {
         this.mLow = mLow;
     }
 
-    public Stocks(int i){
-        if(i==-1){
-            Random random=new Random();
+    public Stocks(String Symbol, int price){
+        Random random=new Random();
+        if (Symbol==null){
             String alphabet="ABCDEFGHIJKMLNOPQRSTOVWXYZ";
             String symbol="";
-            this.mLastPrice=random.nextDouble()*100;
-            //Create a random String Symbol
-            for(i=0; i<4; i++){
+            for(int i=0; i<4; i++){
                 symbol=symbol+alphabet.charAt(random.nextInt(alphabet.length()-1));
             }
             this.mSymbol=symbol;
+        }else{
+            this.mSymbol=Symbol;
+        }
+        if(price==KEY_GENERATE_RANDOM_STOCK){
+
+            this.mLastPrice=random.nextDouble()*100;
+            //Create a random String Symbol
+        }else{
+            this.mLastPrice=price;
         }
     }
 

@@ -3,6 +3,7 @@ package jayxu.com.glassstockassist.UI;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,10 @@ import jayxu.com.glassstockassist.R;
  * A transparent {@link Activity} displaying a "Stop" options menu to remove the {@link LiveCard}.
  */
 public class LiveCardMenuActivity extends Activity {
+
+    private static final String TAG = LiveCardMenuActivity.class.getSimpleName();
+    private static final int INDEX_ADD_MENU =0 ;
+    private static final int INDEX_DELETE_MENU =1 ;
 
     private boolean mFromLiveCardVoice;
     private boolean mIsFinishing;
@@ -58,39 +63,60 @@ public class LiveCardMenuActivity extends Activity {
     public boolean onCreatePanelMenu(int featureId, Menu menu) {
         if (isMyMenu(featureId)) {
             getMenuInflater().inflate(R.menu.livecard_menu, menu);
+            if(LiveStockService.StockList.size()>=LiveStockService.MAX_NUM_STOCKS){
+                //Disabling the add functionality when size is at max
+                menu.getItem(INDEX_ADD_MENU).setEnabled(false);
+            }
+            if(LiveStockService.StockList.size()<=0){
+                //Disabling the delete Functionality when there are no stocks in
+                menu.getItem(INDEX_DELETE_MENU).setEnabled(false);
+            }
             return true;
         }
         return super.onCreatePanelMenu(featureId, menu);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.livecard_menu, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.livecard_menu, menu);
+//        return true;
+//    }
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         if (isMyMenu(featureId)) {
             switch (item.getItemId()) {
-
-                case R.id.action_add: {
+                default:
+                    return true;
+                case R.id.action_add:
+                    //signal the Serivce that user is removing item, do not kill Service:
+                    LiveStockService.AddingOrRemovingItem();
+                    //Starting add activity
                     Intent AddIntent = new Intent(this, AddNewStockActivity.class);
+                    AddIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    AddIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(AddIntent);
-                }
-                case R.id.action_delete:{
+                    break;
+
+                case R.id.action_delete:
+                    //signal the Serivce that user is removing item, do not kill Service:
+                    LiveStockService.AddingOrRemovingItem();
+                    //Starting delete activity
+                    Log.d(TAG, "The isAddingOrRemoving variable at action_delete is "+LiveStockService.isAddingOrRemoving);
                     Intent DeleteIntent = new Intent(this, RemoveActivity.class);
                     DeleteIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     DeleteIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(DeleteIntent);
-                   }
-                case R.id.action_stop:{
+                    break;
+                case R.id.action_stop:
+                    //Set the boolean variable so that onDestroy will unpublish the live card
+                    LiveStockService.doneAddingOrRemovingItem();
                     // Stop the service which will unpublish the live card.
+
+                    Log.d(TAG, "The isAddingOrRemoving variable at action_stop is "+LiveStockService.isAddingOrRemoving);
                     stopService(new Intent(this, LiveStockService.class));
-                    return true;
-                }
-                default:
-                    return true;
+                    break;
+
             }
         }
         return super.onMenuItemSelected(featureId, item);
@@ -128,4 +154,6 @@ public class LiveCardMenuActivity extends Activity {
 //        super.onPause();
 //
 //    }
+
+
 }

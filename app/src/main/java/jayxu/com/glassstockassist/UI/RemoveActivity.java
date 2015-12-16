@@ -1,21 +1,16 @@
 package jayxu.com.glassstockassist.UI;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.touchpad.Gesture;
 import com.google.android.glass.touchpad.GestureDetector;
-import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardBuilder;
 import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
@@ -24,7 +19,6 @@ import java.util.ArrayList;
 
 import jayxu.com.glassstockassist.Model.StockScrollAdapter;
 import jayxu.com.glassstockassist.Model.Stocks;
-import jayxu.com.glassstockassist.R;
 
 /**
  * Created by Yuchen on 12/13/2015.
@@ -35,7 +29,7 @@ public class RemoveActivity extends Activity {
     private ArrayList<Stocks> stocklist=LiveStockService.StockList;
     private CardScrollView mCardScrollerView;
     private ArrayList<CardBuilder> mCards=new ArrayList<>();
-    private GestureDetector mGestureDetector;
+//    private GestureDetector mGestureDetector;
     private CardScrollAdapter mScrollAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,22 +56,22 @@ public class RemoveActivity extends Activity {
     }
 
 
-    private GestureDetector createGestureDetector(Context context) {
-        GestureDetector gestureDetector = new GestureDetector(context);
-        gestureDetector.setBaseListener(new GestureDetector.BaseListener() {
-            @Override
-            public boolean onGesture(Gesture gesture) {
-            if(gesture==Gesture.TAP)
-            {
-
-                return true;
-            }
-            return false;
-            }
-        });
-
-        return gestureDetector;
-    }
+//    private GestureDetector createGestureDetector(Context context) {
+//        GestureDetector gestureDetector = new GestureDetector(context);
+//        gestureDetector.setBaseListener(new GestureDetector.BaseListener() {
+//            @Override
+//            public boolean onGesture(Gesture gesture) {
+//            if(gesture==Gesture.TAP)
+//            {
+//
+//                return true;
+//            }
+//            return false;
+//            }
+//        });
+//
+//        return gestureDetector;
+//    }
 
 //    @Override
 //    public boolean onCreatePanelMenu(int featureId, Menu menu){
@@ -100,7 +94,8 @@ public class RemoveActivity extends Activity {
                 int soundEffect = Sounds.TAP;
                 AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 am.playSoundEffect(soundEffect);
-                //finish();
+                Log.d(TAG, "The isAddingOrRemoving variable is "+LiveStockService.isAddingOrRemoving);
+                finish();
 
             }
         });
