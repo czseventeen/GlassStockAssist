@@ -123,11 +123,14 @@ public class LiveStockService extends Service {
     }
 
     private static void initializeTextViewIDLists() {
+        //Re-initialize things
+        PriceTextViewIDList=new ArrayList<>();
         PriceTextViewIDList.add(R.id.PriceText1);
         PriceTextViewIDList.add(R.id.PriceText2);
         PriceTextViewIDList.add(R.id.PriceText3);
         PriceTextViewIDList.add(R.id.PriceText4);
 
+        SymbolTextViewIDList=new ArrayList<>();
         SymbolTextViewIDList.add(R.id.StockNameText1);
         SymbolTextViewIDList.add(R.id.StockNameText2);
         SymbolTextViewIDList.add(R.id.StockNameText3);
@@ -138,6 +141,7 @@ public class LiveStockService extends Service {
     }
 
     private void initializeRandomStockList() {
+        StockList=new ArrayList<>();
         for(int i=0; i<MAX_NUM_STOCKS; i++){
             // use the random constructor to randomly generate a stock
             Stocks stock=new Stocks(null,Stocks.KEY_GENERATE_RANDOM_STOCK);
