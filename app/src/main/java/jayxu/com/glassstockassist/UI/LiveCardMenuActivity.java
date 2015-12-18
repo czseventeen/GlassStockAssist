@@ -1,7 +1,9 @@
 package jayxu.com.glassstockassist.UI;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -9,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 
+import com.google.android.glass.media.Sounds;
 import com.google.android.glass.timeline.LiveCard;
 import com.google.android.glass.view.WindowUtils;
 
@@ -59,6 +62,8 @@ public class LiveCardMenuActivity extends Activity {
         return super.onPreparePanel(featureId, view, menu);
     }
 
+
+
     @Override
     public boolean onCreatePanelMenu(int featureId, Menu menu) {
         if (isMyMenu(featureId)) {
@@ -85,6 +90,8 @@ public class LiveCardMenuActivity extends Activity {
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         if (isMyMenu(featureId)) {
+//            int soundEffect = Sounds.TAP;
+//            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             switch (item.getItemId()) {
                 default:
                     return true;
@@ -95,8 +102,10 @@ public class LiveCardMenuActivity extends Activity {
                     Intent AddIntent = new Intent(this, AddNewStockActivity.class);
                     AddIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     AddIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    am.playSoundEffect(soundEffect);
                     startActivity(AddIntent);
-                    break;
+                    return true;
+
 
                 case R.id.action_delete:
                     //signal the Serivce that user is removing item, do not kill Service:
@@ -106,8 +115,10 @@ public class LiveCardMenuActivity extends Activity {
                     Intent DeleteIntent = new Intent(this, RemoveActivity.class);
                     DeleteIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     DeleteIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    am.playSoundEffect(soundEffect);
                     startActivity(DeleteIntent);
-                    break;
+                    return true;
+
                 case R.id.action_stop:
                     //Set the boolean variable so that onDestroy will unpublish the live card
                     LiveStockService.doneAddingOrRemovingItem();
@@ -115,7 +126,8 @@ public class LiveCardMenuActivity extends Activity {
 
                     Log.d(TAG, "The isAddingOrRemoving variable at action_stop is "+LiveStockService.isAddingOrRemoving);
                     stopService(new Intent(this, LiveStockService.class));
-                    break;
+                    return true;
+
 
             }
         }

@@ -1,21 +1,16 @@
 package jayxu.com.glassstockassist.UI;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
 
-import com.google.android.glass.touchpad.Gesture;
-import com.google.android.glass.touchpad.GestureDetector;
 
 import java.util.List;
 
 import jayxu.com.glassstockassist.Model.Stocks;
-import jayxu.com.glassstockassist.R;
+
 
 /**
  * Created by Yuchen on 12/13/2015.
@@ -31,9 +26,10 @@ public class AddNewStockActivity extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please say the name of the stock" );
+//Do not add any flags for this, cause this will kill this AddNewStockAcitivty, and the vocie recognition will end immaturely.
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please say the name of the stock you wish to add:" );
         startActivityForResult(intent, SPEECH_REQUEST);
 
     }
@@ -41,16 +37,27 @@ public class AddNewStockActivity extends Activity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
-        Log.d(TAG, "Retrieved speech!!!!!!!!!!");
+        Log.d(TAG, "onActivityResult triggered!!!!!!!!!!");
 
-        if (requestCode == SPEECH_REQUEST && resultCode == RESULT_OK) {
-            List<String> results = data.getStringArrayListExtra(
-                    RecognizerIntent.EXTRA_RESULTS);
-            SpokenText = results.get(0);
-            Log.d(TAG, "The SPOKENTEXT was---------> " +SpokenText);
-            //Initialize a new Stocks obj based on SpokenText, and a randomly generated Price.
-            Stocks stock=new Stocks(SpokenText, Stocks.KEY_GENERATE_RANDOM_STOCK);
-            LiveStockService.addStockItem(stock);
+        if (requestCode == SPEECH_REQUEST ) {
+            Log.d(TAG, "SPEECH_REQUEST Verified!!!!!!!!!!");
+
+            if (resultCode == RESULT_OK) {
+                List<String> results = data.getStringArrayListExtra(
+                        RecognizerIntent.EXTRA_RESULTS);
+                SpokenText = results.get(0);
+                Log.d(TAG, "The SPOKENTEXT was---------> " + SpokenText);
+                //Initialize a new Stocks obj based on SpokenText, and a randomly generated Price.
+                Stocks stock = new Stocks(SpokenText, Stocks.KEY_GENERATE_RANDOM_STOCK);
+                LiveStockService.addStockItem(stock);
+
+                //Kill the SPEECH_REQUEST activity
+                finish();
+
+            }else{
+                Log.d(TAG, "RESULT NOT OK!!!!!!!!!!! result code is: "+resultCode);
+
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
 

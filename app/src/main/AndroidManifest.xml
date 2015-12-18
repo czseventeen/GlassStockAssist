@@ -42,24 +42,16 @@
         </activity>
 
         <activity android:name=".UI.AddNewStockActivity"
-            android:parentActivityName=".UI.LiveCardMenuActivity"
             android:immersive="true"
+            android:parentActivityName=".UI.LiveCardMenuActivity"
             android:theme="@android:style/Theme.DeviceDefault">
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value="jayxu.com.glassstockassist.UI.LiveCardMenuActivity"
             />
         </activity>
-        <!--<meta-data-->
-            <!--android:name="android.support.PARENT_ACTIVITY"-->
-            <!--android:value="jayxu.com.glassstockassist.UI.LiveCardMenuActivity"-->
-            <!--/>-->
 
-        <!--<activity android:name=".UI.AddNewStockActivity"-->
-            <!--android:parentActivityName=".UI.LiveCardMenuActivity"-->
-            <!-->-->
 
-        <!--</activity>-->
     </application>
 
 </manifest>
