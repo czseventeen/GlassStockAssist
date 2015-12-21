@@ -2,11 +2,13 @@ package jayxu.com.glassstockassist.UI;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jayxu.com.glassstockassist.Model.Stocks;
@@ -47,10 +49,9 @@ public class AddNewStockActivity extends Activity{
                         RecognizerIntent.EXTRA_RESULTS);
                 SpokenText = results.get(0);
                 Log.d(TAG, "The SPOKENTEXT was---------> " + SpokenText);
-                //Initialize a new Stocks obj based on SpokenText, and a randomly generated Price.
-                Stocks stock = new Stocks(SpokenText, Stocks.KEY_GENERATE_RANDOM_STOCK);
-                LiveStockService.addStockItem(stock);
 
+                Asyn_findSymbolsByName finder= new Asyn_findSymbolsByName();
+                finder.execute(SpokenText);
                 //Kill the SPEECH_REQUEST activity
                 finish();
 
@@ -69,6 +70,42 @@ public class AddNewStockActivity extends Activity{
         finish();
         super.onDestroy();
     }
+
+    public class Asyn_findSymbolsByName extends AsyncTask<String, Void, ArrayList<Stocks>> {
+
+        @Override
+        protected ArrayList<Stocks> doInBackground(String... params) {
+            return FindRealTimeData.findSymbolByName(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Stocks> stocks) {
+            if(stocks.size()==0){
+                //Start a new activity indicating that there was no match found
+            }if(stocks.size()>1){
+                //more than one stocks found, start a new activity that asks the user to select
+            }if(stocks.size()==1){
+                //There was only 1 match, update the StockList
+                Asyn_AddNewStockToList price_finder= new Asyn_AddNewStockToList();
+                price_finder.execute(stocks.get(0));
+            }
+        }
+    }
+
+    public class Asyn_AddNewStockToList extends AsyncTask<Stocks, Void, Stocks>{
+        @Override
+        protected Stocks doInBackground(Stocks... params) {
+            return FindRealTimeData.findPriceBySymbol(params[0].getmSymbol());
+        }
+
+        @Override
+        protected void onPostExecute(Stocks stock) {
+            LiveStockService.addStockItem(stock);
+        }
+    }
+
+
+
 
 //    private GestureDetector createGestureDetector(Context context) {
 //        GestureDetector gestureDetector = new GestureDetector(context);

@@ -1,9 +1,7 @@
 package jayxu.com.glassstockassist.UI;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,10 +9,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 
-import com.google.android.glass.media.Sounds;
 import com.google.android.glass.timeline.LiveCard;
 import com.google.android.glass.view.WindowUtils;
 
+import jayxu.com.glassstockassist.Model.StockConstants;
 import jayxu.com.glassstockassist.R;
 
 /**
@@ -23,8 +21,6 @@ import jayxu.com.glassstockassist.R;
 public class LiveCardMenuActivity extends Activity {
 
     private static final String TAG = LiveCardMenuActivity.class.getSimpleName();
-    private static final int INDEX_ADD_MENU =0 ;
-    private static final int INDEX_DELETE_MENU =1 ;
 
     private boolean mFromLiveCardVoice;
     private boolean mIsFinishing;
@@ -68,13 +64,13 @@ public class LiveCardMenuActivity extends Activity {
     public boolean onCreatePanelMenu(int featureId, Menu menu) {
         if (isMyMenu(featureId)) {
             getMenuInflater().inflate(R.menu.livecard_menu, menu);
-            if(LiveStockService.StockList.size()>=LiveStockService.MAX_NUM_STOCKS){
+            if(LiveStockService.StockList.size()>= StockConstants.MAX_NUM_STOCKS){
                 //Disabling the add functionality when size is at max
-                menu.getItem(INDEX_ADD_MENU).setEnabled(false);
+                menu.getItem(StockConstants.INDEX_ADD_MENU).setEnabled(false);
             }
             if(LiveStockService.StockList.size()<=0){
                 //Disabling the delete Functionality when there are no stocks in
-                menu.getItem(INDEX_DELETE_MENU).setEnabled(false);
+                menu.getItem(StockConstants.INDEX_DELETE_MENU).setEnabled(false);
             }
             return true;
         }

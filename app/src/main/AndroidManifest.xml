@@ -3,6 +3,8 @@
     package="jayxu.com.glassstockassist" >
     <uses-permission
         android:name="com.google.android.glass.permission.DEVELOPMENT" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

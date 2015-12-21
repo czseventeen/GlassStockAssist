@@ -6,7 +6,6 @@ import java.util.Random;
  * Created by Yuchen on 12/13/2015.
  */
 public class Stocks {
-    public static final int KEY_GENERATE_RANDOM_STOCK = -1;
     private double mLastPrice;
     private String mName;
     private String mSymbol;
@@ -21,6 +20,7 @@ public class Stocks {
     private double mPriceChanges;
     private double mHigh;
     private double mLow;
+    private String mExchangeMarket;
 
     public Stocks(){
         this.mLastPrice = 0;
@@ -37,9 +37,10 @@ public class Stocks {
         this.mPriceChanges = 0;
         this.mHigh = 0;
         this.mLow = 0;
+        this.mExchangeMarket="";
     }
 
-    public Stocks(double mLastPrice, String mName, String mSymbol, double mVolumn, double mCurrentBid, double mCurrentAsk, int mAskSize, int mBidSize, double mMyTradePrice, double mMyTradeShares, double mPercentageChanges, double mPriceChanges, double mHigh, double mLow) {
+    public Stocks(double mLastPrice, String mName, String mSymbol, double mVolumn, double mCurrentBid, double mCurrentAsk, int mAskSize, int mBidSize, double mMyTradePrice, double mMyTradeShares, double mPercentageChanges, double mPriceChanges, double mHigh, double mLow, String Exchange) {
         this.mLastPrice = mLastPrice;
         this.mName = mName;
         this.mSymbol = mSymbol;
@@ -54,9 +55,10 @@ public class Stocks {
         this.mPriceChanges = mPriceChanges;
         this.mHigh = mHigh;
         this.mLow = mLow;
+        this.mExchangeMarket=Exchange;
     }
 
-    public Stocks(String Symbol, int price){
+    public Stocks(String Symbol, double price){
         Random random=new Random();
         if (Symbol==null){
             String alphabet="ABCDEFGHIJKMLNOPQRSTOVWXYZ";
@@ -68,13 +70,20 @@ public class Stocks {
         }else{
             this.mSymbol=Symbol;
         }
-        if(price==KEY_GENERATE_RANDOM_STOCK){
+        if(price== StockConstants.KEY_GENERATE_RANDOM_STOCK){
 
             this.mLastPrice=random.nextDouble()*100;
             //Create a random String Symbol
         }else{
             this.mLastPrice=price;
         }
+    }
+
+    public Stocks(String Name, String Symbol, String exchange){
+        this.mLastPrice = StockConstants.PRICE_NOT_SET;
+        this.mName =Name;
+        this.mSymbol =Symbol;
+        this.mExchangeMarket=exchange;
     }
 
     public double SetAndGetNewRandomStockPrice(){
@@ -193,5 +202,20 @@ public class Stocks {
 
     public void setmLow(double mLow) {
         this.mLow = mLow;
+    }
+
+    public String getmExchangeMarket() {
+        return mExchangeMarket;
+    }
+
+    public void setmExchangeMarket(String mExchangeMarket) {
+        this.mExchangeMarket = mExchangeMarket;
+    }
+
+    @Override
+    public String toString() {
+        return "The stock name is:"+this.mName
+                +", symbol: "+this.mSymbol
+                +", price: "+this.mLastPrice;
     }
 }
