@@ -5,6 +5,7 @@ package jayxu.com.glassstockassist.Model;
  */
 public class StockConstants {
     public static final String KEY_APICALLBACKNAME="findSymbolByName";
+    //could use goolge as a replacement http://www.google.com/finance/info?q=NSE:XXXX
     public static final String StockPriceAPIURL="http://dev.markitondemand.com/MODApis/Api/v2/Quote/jsonp?symbol=SYMBOSTRING&callback="+KEY_APICALLBACKNAME;
     public static final String StockSymbolLookupAPIURL="http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input=SEARCHSTRING&callback="+KEY_APICALLBACKNAME;
     //Below are used to replace the API query with valid data
@@ -40,6 +41,13 @@ public class StockConstants {
     public static final String JSON_KEY_VOLUME="Volume";
     public static final String JSON_KEY_HIGH="High";
     public static final String JSON_KEY_LOW="Low";
+
+    //Below are the title string used to display data:
+    public static final String WelcomeTitle="Here is your watchlist:";
+    public static final String NoStocks="Press Touchpad to add stocks to your watchlist";
+
+    //Used by AddNewStockActivity to pass the Stock Arraylist to AddSelectionScreenActivity
+    public static final String KEY_STOCK_PARCELABLE="PARCELABLESTOCK";
 
 
 }

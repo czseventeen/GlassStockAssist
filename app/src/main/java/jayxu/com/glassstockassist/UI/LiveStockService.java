@@ -83,7 +83,9 @@ public class LiveStockService extends Service {
         int i=0;
         if(StockList.size()==0){
             //There are no stocks in the watchlist , tell the user so.
-            mRemoteViews.setTextViewText(R.id.CardTitle, "You aren't watching any stocks");
+            mRemoteViews.setTextViewText(R.id.CardTitle, StockConstants.NoStocks);
+        }else{
+            mRemoteViews.setTextViewText(R.id.CardTitle, StockConstants.WelcomeTitle );
         }
 
         for (Stocks stock:StockList) {
@@ -151,7 +153,7 @@ public class LiveStockService extends Service {
         public void run(){
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             boolean isScreenOn=pm.isScreenOn();
-            Log.d(TAG, "The UpdateLiveCardRunnable has been called, the screen on is:"+isScreenOn);
+            //Log.d(TAG, "The UpdateLiveCardRunnable has been called, the screen on is:"+isScreenOn);
             if(isRunning()) {
                 if(isScreenOn) {
                     // Update the remote view with the new Prices;
@@ -180,8 +182,8 @@ public class LiveStockService extends Service {
         public void run() {
             for (int i = 0; i < StockList.size(); i++) {
                 Stocks NewStock = FindRealTimeData.findPriceBySymbol(StockList.get(i).getmSymbol());
+                Log.d(TAG, "Updating to old Stock:"+StockList.get(i).getmSymbol()+"To new Stock :" + NewStock.getmSymbol());
                 StockList.set(i, NewStock);
-                Log.d(TAG, "Updating to new Stock:" + NewStock.toString());
             }
         }
     }

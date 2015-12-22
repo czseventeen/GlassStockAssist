@@ -9,4 +9,7 @@
     <string name="action_add">Add</string>
     <string name="action_delete">Delete</string>
     <string name="glass_voice_trigger">Check my Stocks</string>
+
+    <string name="no_stock_symbol_found">Couldn\'t find the stock you are looking for</string>
+    <string name="no_stock_symbol_found_footer">Tap to dismiss</string>
 </resources>

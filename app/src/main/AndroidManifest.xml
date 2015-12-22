@@ -9,7 +9,8 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:name=".UI.GlassWatcherApp">
 
         <service
             android:name=".UI.LiveStockService"
@@ -52,7 +53,15 @@
             android:value="jayxu.com.glassstockassist.UI.LiveCardMenuActivity"
             />
         </activity>
-
+        <activity android:name=".UI.AddSelectionScreenActivity"
+            android:theme="@android:style/Theme.DeviceDefault"
+            android:enabled="true"
+            android:parentActivityName=".UI.AddNewStockActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="jayxu.com.glassstockassist.UI.AddNewStockActivity"
+                />
+        </activity>
 
     </application>
 

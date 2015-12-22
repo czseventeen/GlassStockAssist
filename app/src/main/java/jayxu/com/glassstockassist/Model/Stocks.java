@@ -1,11 +1,14 @@
 package jayxu.com.glassstockassist.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Random;
 
 /**
  * Created by Yuchen on 12/13/2015.
  */
-public class Stocks {
+public class Stocks implements Parcelable {
     private double mLastPrice;
     private String mName;
     private String mSymbol;
@@ -217,5 +220,64 @@ public class Stocks {
         return "The stock name is:"+this.mName
                 +", symbol: "+this.mSymbol
                 +", price: "+this.mLastPrice;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.mName);
+        dest.writeString(this.mSymbol);
+        dest.writeString(this.mExchangeMarket);
+
+        dest.writeDouble(this.mLastPrice);
+        dest.writeDouble(this.mVolumn);
+        dest.writeDouble(this.mCurrentBid);
+        dest.writeDouble(this.mCurrentAsk);
+        dest.writeDouble(this.mMyTradePrice);
+        dest.writeDouble(this.mMyTradeShares);
+        dest.writeDouble(this.mPercentageChanges);
+        dest.writeDouble(this.mPriceChanges);
+        dest.writeDouble(this.mHigh);
+        dest.writeDouble(this.mLow);
+
+        dest.writeInt(this.mAskSize);
+        dest.writeInt(this.mBidSize);
+    }
+
+    public static final Creator<Stocks> CREATOR=new Creator<Stocks>() {
+        @Override
+        public Stocks createFromParcel(Parcel source) {
+            return new Stocks(source);
+        }
+
+        @Override
+        public Stocks[] newArray(int size) {
+            return new Stocks[size];
+        }
+    };
+    // "De-parcel object
+    public Stocks(Parcel in){
+
+        this.mName =in.readString() ;
+        this.mSymbol = in.readString();
+        this.mExchangeMarket=in.readString();
+
+        this.mLastPrice =in.readDouble() ;
+        this.mVolumn = in.readDouble();
+        this.mCurrentBid = in.readDouble();
+        this.mCurrentAsk = in.readDouble();
+        this.mMyTradePrice = in.readDouble();
+        this.mMyTradeShares = in.readDouble();
+        this.mPercentageChanges = in.readDouble();
+        this.mPriceChanges = in.readDouble();
+        this.mHigh = in.readDouble();
+        this.mLow = in.readDouble();
+
+        this.mAskSize = in.readInt();
+        this.mBidSize = in.readInt();
     }
 }
