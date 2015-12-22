@@ -8,7 +8,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -31,7 +30,7 @@ public class LiveStockService extends Service {
     public static LiveCard mLiveCard;
     protected static RemoteViews mRemoteViews;
 
-    public static ArrayList<Stocks> StockList=new ArrayList<>();
+    private static ArrayList<Stocks> StockList=new ArrayList<>();
     private static ArrayList<Integer> PriceTextViewIDList=new ArrayList<>();
     private static ArrayList<Integer> SymbolTextViewIDList=new ArrayList<>();
 
@@ -85,7 +84,7 @@ public class LiveStockService extends Service {
             //There are no stocks in the watchlist , tell the user so.
             mRemoteViews.setTextViewText(R.id.CardTitle, StockConstants.NoStocks);
         }else{
-            mRemoteViews.setTextViewText(R.id.CardTitle, StockConstants.WelcomeTitle );
+            mRemoteViews.setTextViewText(R.id.CardTitle, StockConstants.WelcomeTitle);
         }
 
         for (Stocks stock:StockList) {
@@ -94,16 +93,19 @@ public class LiveStockService extends Service {
                continue;
            }
             //store the old price value for comparison
-            double Price = (Math.round(stock.getmLastPrice()*100.0)/100.0);
+            double Price = (Math.round(stock.getmCurrentPrice()*100.0)/100.0);
             //print the new Price
             mRemoteViews.setTextViewText(PriceTextViewIDList.get(i), "" + Price);
             //Change the color of the Price based on Price change
             if (stock.getmPercentageChanges()>0) {
                 //increasing
                 mRemoteViews.setTextColor(PriceTextViewIDList.get(i), Color.GREEN);
-            } else {
+            } else if(stock.getmPercentageChanges()<0) {
                 //decreasing price
                 mRemoteViews.setTextColor(PriceTextViewIDList.get(i), Color.RED);
+            }else{
+                //Price didn't change
+                mRemoteViews.setTextColor(PriceTextViewIDList.get(i), Color.WHITE);
             }
             //If adding new/removing stock from the list, repopulate the list
             if(code== StockConstants.KEY_USING_NEW_STOCKS || code== StockConstants.KEY_ADD_STOCK || code == StockConstants.KEY_REMOVE_ITEM){
@@ -158,9 +160,6 @@ public class LiveStockService extends Service {
                 if(isScreenOn) {
                     // Update the remote view with the new Prices;
                     new Thread(new UpdateStockListRunnable()).start();
-                    updateRemoteView(StockConstants.KEY_UPDATE_PRICE);
-                    // Always call setViews() to update the live card's RemoteViews.
-                    mLiveCard.setViews(mRemoteViews);
                 }
                 // Queue another score update in 30 seconds.
                 mHandler.postDelayed(mUpdateLiveCardRunnable, StockConstants.UPDATE_RATE);
@@ -182,11 +181,27 @@ public class LiveStockService extends Service {
         public void run() {
             for (int i = 0; i < StockList.size(); i++) {
                 Stocks NewStock = FindRealTimeData.findPriceBySymbol(StockList.get(i).getmSymbol());
-                Log.d(TAG, "Updating to old Stock:"+StockList.get(i).getmSymbol()+"To new Stock :" + NewStock.getmSymbol());
-                StockList.set(i, NewStock);
+                if(!NewStock.getmSymbol().equals("")) {
+                    //Only update when the request comeback OK
+                    StockList.set(i, NewStock);
+                }
+                else{
+                    Log.d(TAG, "Find Price Query for "+StockList.get(i).getmSymbol()+" has Failed !+!+!+!+!+!+!+!+!+!");
+                }
+                try {
+                    //Adding this delay to prevent queries to API from happening too fast
+                    Thread.sleep(100);
+                    Log.d(TAG, "Waiting for 0.1 second to prevent querying too fast for data");
+                } catch (InterruptedException e) {
+                    Log.d(TAG, "Couldn't wait!!!!!!!!!!!!!!!!");
+                }
             }
+            updateRemoteView(StockConstants.KEY_UPDATE_PRICE);
+            // Always call setViews() to update the live card's RemoteViews.
+            mLiveCard.setViews(mRemoteViews);
         }
     }
+
 
     public static void removeStockItem(int i){
            StockList.remove(i);
@@ -208,6 +223,10 @@ public class LiveStockService extends Service {
 
     }
 
+    public static ArrayList<Stocks> getStockList(){
+        return StockList;
+    }
+
     public static void AddingOrRemovingItem(){
         isAddingOrRemoving =true;
     }
@@ -226,11 +245,4 @@ public class LiveStockService extends Service {
         }
     }*/
 
-//    public class UpdateStockList extends AsyncTask<String, void, Stocks>{
-//
-//        @Override
-//        protected Stocks doInBackground(String... params) {
-//            return null;
-//        }
-//    }
 }

@@ -49,9 +49,16 @@ public class AddSelectionScreenActivity extends Activity {
         for(Stocks stock: stocklist) {
             //Checks if the stock is valid entry.
             if(!stock.getmName().equals("")) {
+                int endOfString=stock.getmName().length();
+                String StockName=stock.getmName();
+//                if(endOfString>10){
+//                    endOfString=10;
+//                    StockName=StockName.substring(0,endOfString)+"...";
+//                }
                 Log.d(TAG, "The name of this stock was : +"+ stock.getmName()+"+");
                 mCards.add(new CardBuilder(context, CardBuilder.Layout.MENU)
-                        .setText(stock.getmName()));
+                        .setText(stock.getmSymbol())
+                        .setFootnote(StockName+" @ "+stock.getmExchangeMarket()));
             }
         }
     }
@@ -59,8 +66,7 @@ public class AddSelectionScreenActivity extends Activity {
         mCardScrollerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "Clicked view at position " + position + "Going to Add: " + stocklist.get(position).getmName());
-                //LiveStockService.removeStockItem(position);
+                Log.d(TAG, "Clicked view at position " + position + " Going to Add: " + stocklist.get(position).getmName());
                 //Using the AsyncTask Asyn_AddNewStockToList to query the latest update on the particular stock, then add that stock to our Stock watchlist
                 AddNewStockActivity.Asyn_AddNewStockToList addNewStockTask=new AddNewStockActivity.Asyn_AddNewStockToList();
                 addNewStockTask.execute(stocklist.get(position));
@@ -69,7 +75,6 @@ public class AddSelectionScreenActivity extends Activity {
                 int soundEffect = Sounds.TAP;
                 AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 am.playSoundEffect(soundEffect);
-//                Log.d(TAG, "The isAddingOrRemoving variable is "+LiveStockService.isAddingOrRemoving);
                 finish();
 
             }

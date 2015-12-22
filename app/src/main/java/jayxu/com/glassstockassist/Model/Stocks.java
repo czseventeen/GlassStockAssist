@@ -9,7 +9,7 @@ import java.util.Random;
  * Created by Yuchen on 12/13/2015.
  */
 public class Stocks implements Parcelable {
-    private double mLastPrice;
+    private double mCurrentPrice;
     private String mName;
     private String mSymbol;
     private double mVolumn;
@@ -26,7 +26,7 @@ public class Stocks implements Parcelable {
     private String mExchangeMarket;
 
     public Stocks(){
-        this.mLastPrice = 0;
+        this.mCurrentPrice = 0;
         this.mName ="";
         this.mSymbol ="";
         this.mVolumn = 0;
@@ -43,8 +43,8 @@ public class Stocks implements Parcelable {
         this.mExchangeMarket="";
     }
 
-    public Stocks(double mLastPrice, String mName, String mSymbol, double mVolumn, double mCurrentBid, double mCurrentAsk, int mAskSize, int mBidSize, double mMyTradePrice, double mMyTradeShares, double mPercentageChanges, double mPriceChanges, double mHigh, double mLow, String Exchange) {
-        this.mLastPrice = mLastPrice;
+    public Stocks(double mCurrentPrice, String mName, String mSymbol, double mVolumn, double mCurrentBid, double mCurrentAsk, int mAskSize, int mBidSize, double mMyTradePrice, double mMyTradeShares, double mPercentageChanges, double mPriceChanges, double mHigh, double mLow, String Exchange) {
+        this.mCurrentPrice = mCurrentPrice;
         this.mName = mName;
         this.mSymbol = mSymbol;
         this.mVolumn = mVolumn;
@@ -75,15 +75,15 @@ public class Stocks implements Parcelable {
         }
         if(price== StockConstants.KEY_GENERATE_RANDOM_STOCK){
 
-            this.mLastPrice=random.nextDouble()*100;
+            this.mCurrentPrice =random.nextDouble()*100;
             //Create a random String Symbol
         }else{
-            this.mLastPrice=price;
+            this.mCurrentPrice =price;
         }
     }
 
     public Stocks(String Name, String Symbol, String exchange){
-        this.mLastPrice = StockConstants.PRICE_NOT_SET;
+        this.mCurrentPrice = StockConstants.PRICE_NOT_SET;
         this.mName =Name;
         this.mSymbol =Symbol;
         this.mExchangeMarket=exchange;
@@ -91,16 +91,16 @@ public class Stocks implements Parcelable {
 
     public double SetAndGetNewRandomStockPrice(){
         Random random=new Random();
-        this.setmLastPrice(getmLastPrice()+(random.nextDouble()*4)-2);
-        return getmLastPrice();
+        this.setmCurrentPrice(getmCurrentPrice() + (random.nextDouble() * 4) - 2);
+        return getmCurrentPrice();
     }
 
-    public double getmLastPrice() {
-        return mLastPrice;
+    public double getmCurrentPrice() {
+        return mCurrentPrice;
     }
 
-    public void setmLastPrice(double mLastPrice) {
-        this.mLastPrice = mLastPrice;
+    public void setmCurrentPrice(double mCurrentPrice) {
+        this.mCurrentPrice = mCurrentPrice;
     }
 
     public String getmName() {
@@ -219,7 +219,7 @@ public class Stocks implements Parcelable {
     public String toString() {
         return "The stock name is:"+this.mName
                 +", symbol: "+this.mSymbol
-                +", price: "+this.mLastPrice;
+                +", price: "+this.mCurrentPrice;
     }
 
     @Override
@@ -233,7 +233,7 @@ public class Stocks implements Parcelable {
         dest.writeString(this.mSymbol);
         dest.writeString(this.mExchangeMarket);
 
-        dest.writeDouble(this.mLastPrice);
+        dest.writeDouble(this.mCurrentPrice);
         dest.writeDouble(this.mVolumn);
         dest.writeDouble(this.mCurrentBid);
         dest.writeDouble(this.mCurrentAsk);
@@ -266,7 +266,7 @@ public class Stocks implements Parcelable {
         this.mSymbol = in.readString();
         this.mExchangeMarket=in.readString();
 
-        this.mLastPrice =in.readDouble() ;
+        this.mCurrentPrice =in.readDouble() ;
         this.mVolumn = in.readDouble();
         this.mCurrentBid = in.readDouble();
         this.mCurrentAsk = in.readDouble();

@@ -56,8 +56,11 @@ public class AddNewStockActivity extends Activity{
                         RecognizerIntent.EXTRA_RESULTS);
                 SpokenText = results.get(0);
                 Log.d(TAG, "The SPOKENTEXT was---------> " + SpokenText);
+                //removing spaces to fit the HTTP protocol
+                SpokenText=SpokenText.replace(" ","");
                 Asyn_findSymbolsByName finder= new Asyn_findSymbolsByName();
-                finder.execute(SpokenText);
+                finder.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, SpokenText);
+                //finder.execute(SpokenText);
                 //Kill the SPEECH_REQUEST activity
 
             }else{
@@ -65,6 +68,7 @@ public class AddNewStockActivity extends Activity{
 
             }
         }
+        finish();
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -85,11 +89,13 @@ public class AddNewStockActivity extends Activity{
 
         @Override
         protected ArrayList<Stocks> doInBackground(String... params) {
+          //  android.os.Debug.waitForDebugger();
             return FindRealTimeData.findSymbolByName(params[0]);
         }
 
         @Override
         protected void onPostExecute(ArrayList<Stocks> stocks) {
+          //  android.os.Debug.waitForDebugger();
             if(stocks.size()==0){
 //          Alert the user the name was not found and keep speech recognition running.
 
@@ -109,18 +115,18 @@ public class AddNewStockActivity extends Activity{
                         onClickListener);
                 alert.show();
 
-            }if(stocks.size()>1){
-                finish();
+            }else if(stocks.size()>1){
                 //more than one stocks found, start a new activity that asks the user to select
                 Intent intent=new Intent(AddNewStockActivity.this, AddSelectionScreenActivity.class);
                 intent.putExtra(StockConstants.KEY_STOCK_PARCELABLE,stocks);
                 startActivity(intent);
-            }if(stocks.size()==1){
-                finish();
+            }else if(stocks.size()==1){
                 //There was only 1 match, update the StockList
                 Asyn_AddNewStockToList price_finder= new Asyn_AddNewStockToList();
-                price_finder.execute(stocks.get(0));
+                price_finder.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,stocks.get(0));
+                //price_finder.execute(stocks.get(0));
             }
+//            this.cancel(true);
         }
     }
 
@@ -134,12 +140,15 @@ public class AddNewStockActivity extends Activity{
     public static class Asyn_AddNewStockToList extends AsyncTask<Stocks, Void, Stocks>{
         @Override
         protected Stocks doInBackground(Stocks... params) {
+         //   android.os.Debug.waitForDebugger();
             return FindRealTimeData.findPriceBySymbol(params[0].getmSymbol());
         }
 
         @Override
         protected void onPostExecute(Stocks stock) {
+         //   android.os.Debug.waitForDebugger();
             LiveStockService.addStockItem(stock);
+//            this.cancel(true);
         }
     }
 

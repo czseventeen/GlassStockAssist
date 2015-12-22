@@ -64,11 +64,11 @@ public class LiveCardMenuActivity extends Activity {
     public boolean onCreatePanelMenu(int featureId, Menu menu) {
         if (isMyMenu(featureId)) {
             getMenuInflater().inflate(R.menu.livecard_menu, menu);
-            if(LiveStockService.StockList.size()>= StockConstants.MAX_NUM_STOCKS){
+            if(LiveStockService.getStockList().size()>= StockConstants.MAX_NUM_STOCKS){
                 //Disabling the add functionality when size is at max
                 menu.getItem(StockConstants.INDEX_ADD_MENU).setEnabled(false);
             }
-            if(LiveStockService.StockList.size()<=0){
+            if(LiveStockService.getStockList().size()<=0){
                 //Disabling the delete Functionality when there are no stocks in
                 menu.getItem(StockConstants.INDEX_DELETE_MENU).setEnabled(false);
             }

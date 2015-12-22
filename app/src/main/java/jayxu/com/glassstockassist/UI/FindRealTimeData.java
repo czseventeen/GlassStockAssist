@@ -1,16 +1,8 @@
 package jayxu.com.glassstockassist.UI;
 
-import android.app.DownloadManager;
-import android.content.Context;
-import android.content.Entity;
-import android.os.AsyncTask;
 import android.util.Log;
 
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,17 +15,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 
 import jayxu.com.glassstockassist.Model.StockConstants;
@@ -44,8 +28,8 @@ import jayxu.com.glassstockassist.Model.Stocks;
  * This class is used by other classes to make API calls and grab real time stock price data
  */
 public class FindRealTimeData {
-    protected static ArrayList<Stocks> SearchResults = new ArrayList<>();
-    protected static Stocks stock = new Stocks();
+
+ //   protected static Stocks stock = new Stocks();
 
     private static final String TAG = FindRealTimeData.class.getSimpleName();
 
@@ -54,10 +38,8 @@ public class FindRealTimeData {
 
     public static ArrayList<Stocks> findSymbolByName(String StockName) {
         //clear the current result list for a new search
-
-        SearchResults.clear();
+        ArrayList<Stocks> SearchResults = new ArrayList<>();
 //        re-do the search for the new StockName
-
         HttpResponse response = null;
         HttpClient client = new DefaultHttpClient();
         HttpGet request = new HttpGet();
@@ -102,6 +84,7 @@ public class FindRealTimeData {
     }
 
     public static Stocks findPriceBySymbol(String Symbol) {
+        Stocks stock=new Stocks();
         HttpResponse response = null;
         HttpClient client = new DefaultHttpClient();
         HttpGet request = new HttpGet();
@@ -126,9 +109,9 @@ public class FindRealTimeData {
             result = result.replace(StockConstants.KEY_APICALLBACKNAME + "(", "");
             result = result.replace(")", "");
             JSONObject obj = new JSONObject(result);
-            Log.d(TAG, "The last price was :" + obj.getDouble(StockConstants.JSON_KEY_LASTPRICE));
+            Log.d(TAG, "The New price is :" + obj.getDouble(StockConstants.JSON_KEY_LASTPRICE));
             //modifying the stock obj to return with all the data we got back from the JSON API
-            stock.setmLastPrice(obj.getDouble(StockConstants.JSON_KEY_LASTPRICE));
+            stock.setmCurrentPrice(obj.getDouble(StockConstants.JSON_KEY_LASTPRICE));
             stock.setmName(obj.getString(StockConstants.JSON_KEY_NAME));
             stock.setmSymbol(obj.getString(StockConstants.JSON_KEY_SYMBOL));
             stock.setmPriceChanges(obj.getDouble(StockConstants.JSON_KEY_CHANGE));
@@ -142,8 +125,6 @@ public class FindRealTimeData {
         } catch (IOException e) {
             Log.d(TAG, "Caught IOException: " + e);
         }
-
-
         return stock;
     }
 

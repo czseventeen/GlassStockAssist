@@ -26,7 +26,7 @@ import jayxu.com.glassstockassist.Model.Stocks;
 public class RemoveActivity extends Activity {
     private static final String TAG= RemoveActivity.class.getSimpleName();
 
-    private ArrayList<Stocks> stocklist=LiveStockService.StockList;
+    private ArrayList<Stocks> stocklist=LiveStockService.getStockList();
     private CardScrollView mCardScrollerView;
     private ArrayList<CardBuilder> mCards=new ArrayList<>();
 //    private GestureDetector mGestureDetector;
