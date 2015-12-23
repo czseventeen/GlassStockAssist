@@ -41,13 +41,15 @@ public class StockConstants {
     public static final String JSON_KEY_VOLUME="Volume";
     public static final String JSON_KEY_HIGH="High";
     public static final String JSON_KEY_LOW="Low";
-
+    public static final String JSON_KEY_STATUS="Status";
+    public static final String JSON_KEY_SUCCESS = "SUCCESS";
     //Below are the title string used to display data:
     public static final String WelcomeTitle="Here is your watchlist:";
     public static final String NoStocks="Press Touchpad to add stocks to your watchlist";
 
     //Used by AddNewStockActivity to pass the Stock Arraylist to AddSelectionScreenActivity
     public static final String KEY_STOCK_PARCELABLE="PARCELABLESTOCK";
+
 
 
 }

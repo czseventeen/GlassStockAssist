@@ -109,16 +109,23 @@ public class FindRealTimeData {
             result = result.replace(StockConstants.KEY_APICALLBACKNAME + "(", "");
             result = result.replace(")", "");
             JSONObject obj = new JSONObject(result);
-            //Log.d(TAG, "The New price is :" + obj.getDouble(StockConstants.JSON_KEY_LASTPRICE));
-            //modifying the stock obj to return with all the data we got back from the JSON API
-            stock.setmCurrentPrice(obj.getDouble(StockConstants.JSON_KEY_LASTPRICE));
-            stock.setmName(obj.getString(StockConstants.JSON_KEY_NAME));
-            stock.setmSymbol(obj.getString(StockConstants.JSON_KEY_SYMBOL));
-            stock.setmPriceChanges(obj.getDouble(StockConstants.JSON_KEY_CHANGE));
-            stock.setmPercentageChanges(obj.getDouble(StockConstants.JSON_KEY_CHANGE_PERCENT));
-            stock.setmVolumn(obj.getDouble(StockConstants.JSON_KEY_VOLUME));
-            stock.setmHigh(obj.getDouble(StockConstants.JSON_KEY_HIGH));
-            stock.setmLow(obj.getDouble(StockConstants.JSON_KEY_LOW));
+            String Status=obj.getString(StockConstants.JSON_KEY_STATUS);
+            //First check to see if the result was successful;
+            if(Status.equals(StockConstants.JSON_KEY_SUCCESS)) {
+                //Log.d(TAG, "The New price is :" + obj.getDouble(StockConstants.JSON_KEY_LASTPRICE));
+                //modifying the stock obj to return with all the data we got back from the JSON API
+                stock.setmCurrentPrice(obj.getDouble(StockConstants.JSON_KEY_LASTPRICE));
+                stock.setmName(obj.getString(StockConstants.JSON_KEY_NAME));
+                stock.setmSymbol(obj.getString(StockConstants.JSON_KEY_SYMBOL));
+                stock.setmPriceChanges(obj.getDouble(StockConstants.JSON_KEY_CHANGE));
+                stock.setmPercentageChanges(obj.getDouble(StockConstants.JSON_KEY_CHANGE_PERCENT));
+                stock.setmVolumn(obj.getDouble(StockConstants.JSON_KEY_VOLUME));
+                stock.setmHigh(obj.getDouble(StockConstants.JSON_KEY_HIGH));
+                stock.setmLow(obj.getDouble(StockConstants.JSON_KEY_LOW));
+            }else{
+                //Signal to the original method that the price is not set.
+                stock.setmCurrentPrice(StockConstants.PRICE_NOT_SET);
+            }
 
         } catch (JSONException e) {
             Log.d(TAG, "Caught JSONException:" + e);

@@ -44,7 +44,7 @@ public class Stocks implements Parcelable {
     }
 
     public Stocks(double mCurrentPrice, String mName, String mSymbol, double mVolumn, double mCurrentBid, double mCurrentAsk, int mAskSize, int mBidSize, double mMyTradePrice, double mMyTradeShares, double mPercentageChanges, double mPriceChanges, double mHigh, double mLow, String Exchange) {
-        this.mCurrentPrice = mCurrentPrice;
+        this.mCurrentPrice = StockConstants.PRICE_NOT_SET;
         this.mName = mName;
         this.mSymbol = mSymbol;
         this.mVolumn = mVolumn;
@@ -63,7 +63,7 @@ public class Stocks implements Parcelable {
 
     public Stocks(String Symbol, double price){
         Random random=new Random();
-        if (Symbol==null){
+        if (Symbol.equals("")){
             String alphabet="ABCDEFGHIJKMLNOPQRSTOVWXYZ";
             String symbol="";
             for(int i=0; i<4; i++){

@@ -181,7 +181,7 @@ public class LiveStockService extends Service {
         public void run() {
             for (int i = 0; i < StockList.size(); i++) {
                 Stocks NewStock = FindRealTimeData.findPriceBySymbol(StockList.get(i).getmSymbol());
-                if(!NewStock.getmSymbol().equals("")) {
+                if(NewStock.getmCurrentPrice()!=StockConstants.PRICE_NOT_SET) {
                     //Only update when the request comeback OK
                     Log.d(TAG, "Updating stock price for :"+NewStock.getmName()+" to "+NewStock.getmCurrentPrice());
                     StockList.set(i, NewStock);
