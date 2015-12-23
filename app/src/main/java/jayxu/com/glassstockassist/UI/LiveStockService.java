@@ -2,6 +2,7 @@ package jayxu.com.glassstockassist.UI;
 
 import com.google.android.glass.timeline.LiveCard;
 import com.google.android.glass.timeline.LiveCard.PublishMode;
+import com.google.android.glass.view.WindowUtils;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -65,7 +66,7 @@ public class LiveStockService extends Service {
             Intent menuIntent = new Intent(this, LiveCardMenuActivity.class);
             menuIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             mLiveCard.setAction(PendingIntent.getActivity(this, 1, menuIntent, 0));
-            //mLiveCard.setVoiceActionEnabled(true);
+            mLiveCard.setVoiceActionEnabled(true);
             mLiveCard.publish(PublishMode.REVEAL);
 
             // Queue the update text runnable
@@ -181,13 +182,13 @@ public class LiveStockService extends Service {
         public void run() {
             for (int i = 0; i < StockList.size(); i++) {
                 Stocks NewStock = FindRealTimeData.findPriceBySymbol(StockList.get(i).getmSymbol());
-                if(NewStock.getmCurrentPrice()!=StockConstants.PRICE_NOT_SET) {
+                if(NewStock.getmName().equals("")||NewStock.getmCurrentPrice()==StockConstants.PRICE_NOT_SET) {
+                    Log.d(TAG, "Find Price Query for "+StockList.get(i).getmSymbol()+" has Failed !+!+!+!+!+!+!+!+!+!");
+                }
+                else{
                     //Only update when the request comeback OK
                     Log.d(TAG, "Updating stock price for :"+NewStock.getmName()+" to "+NewStock.getmCurrentPrice());
                     StockList.set(i, NewStock);
-                }
-                else{
-                    Log.d(TAG, "Find Price Query for "+StockList.get(i).getmSymbol()+" has Failed !+!+!+!+!+!+!+!+!+!");
                 }
                 try {
                     //Adding this delay to prevent queries to API from happening too fast

@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.touchpad.Gesture;
 import com.google.android.glass.touchpad.GestureDetector;
+import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardBuilder;
 import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
@@ -24,6 +25,7 @@ import jayxu.com.glassstockassist.Model.Stocks;
  * Created by Yuchen on 12/13/2015.
  */
 public class RemoveActivity extends Activity {
+
     private static final String TAG= RemoveActivity.class.getSimpleName();
 
     private ArrayList<Stocks> stocklist=LiveStockService.getStockList();
@@ -34,7 +36,6 @@ public class RemoveActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         PopulateCardList(this);
         mCardScrollerView =new CardScrollView(this);
         mScrollAdapter=new StockScrollAdapter(mCards);

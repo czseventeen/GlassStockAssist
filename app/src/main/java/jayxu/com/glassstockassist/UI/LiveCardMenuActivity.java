@@ -28,12 +28,14 @@ public class LiveCardMenuActivity extends Activity {
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-        // Open the options menu right away.
-        openOptionsMenu();
+        if (!mFromLiveCardVoice) {
+            openOptionsMenu();
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Enabling Voice commands
         super.onCreate(savedInstanceState);
         mFromLiveCardVoice=getIntent().getBooleanExtra(LiveCard.EXTRA_FROM_LIVECARD_VOICE, false);
 

@@ -104,7 +104,7 @@ public class FindRealTimeData {
         try {
 
             String result = EntityUtils.toString(entity);
-            //Log.d(TAG, "Price response was :" + result);
+            Log.d(TAG, "Price response was :" + result);
             //formatting resulting Json
             result = result.replace(StockConstants.KEY_APICALLBACKNAME + "(", "");
             result = result.replace(")", "");
@@ -112,7 +112,7 @@ public class FindRealTimeData {
             String Status=obj.getString(StockConstants.JSON_KEY_STATUS);
             //First check to see if the result was successful;
             if(Status.equals(StockConstants.JSON_KEY_SUCCESS)) {
-                //Log.d(TAG, "The New price is :" + obj.getDouble(StockConstants.JSON_KEY_LASTPRICE));
+                Log.d(TAG, "The New price is :" + obj.getDouble(StockConstants.JSON_KEY_LASTPRICE));
                 //modifying the stock obj to return with all the data we got back from the JSON API
                 stock.setmCurrentPrice(obj.getDouble(StockConstants.JSON_KEY_LASTPRICE));
                 stock.setmName(obj.getString(StockConstants.JSON_KEY_NAME));

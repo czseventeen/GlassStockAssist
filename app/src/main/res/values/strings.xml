@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">GlassStockAssist</string>
     <string name="title_activity_live_stock_service">Stock Assist</string>
-    <string name="action_stop">Stop</string>
+    <string name="action_stop">Stop Stock Watcher</string>
     <string name="hello_world">Hello world!</string>
     <string name="WelcomeTitle">Here are you stocks</string>
     <string name="StockName">Stock Name</string>
