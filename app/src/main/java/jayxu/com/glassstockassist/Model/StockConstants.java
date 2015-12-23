@@ -6,8 +6,8 @@ package jayxu.com.glassstockassist.Model;
 public class StockConstants {
     public static final String KEY_APICALLBACKNAME="findSymbolByName";
     //could use goolge as a replacement http://www.google.com/finance/info?q=NSE:XXXX
-    public static final String StockPriceAPIURL="http://dev.markitondemand.com/MODApis/Api/v2/Quote/jsonp?symbol=SYMBOSTRING&callback="+KEY_APICALLBACKNAME;
     public static final String StockSymbolLookupAPIURL="http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input=SEARCHSTRING&callback="+KEY_APICALLBACKNAME;
+    public static final String StockPriceAPIURL="http://dev.markitondemand.com/MODApis/Api/v2/Quote/jsonp?symbol=SYMBOSTRING&callback="+KEY_APICALLBACKNAME;
     //Below are used to replace the API query with valid data
     public static final String KEY_SEARCHSTRING="SEARCHSTRING";
     public static final String KEY_SYMBOLSTRING="SYMBOSTRING";

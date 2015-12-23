@@ -11,5 +11,5 @@
     <string name="glass_voice_trigger">Check my Stocks</string>
 
     <string name="no_stock_symbol_found">Couldn\'t find the stock you are looking for</string>
-    <string name="no_stock_symbol_found_footer">Tap to dismiss</string>
+    <string name="no_stock_symbol_found_footer">Swipe Down to dismiss</string>
 </resources>

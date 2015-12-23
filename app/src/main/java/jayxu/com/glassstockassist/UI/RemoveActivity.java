@@ -50,7 +50,7 @@ public class RemoveActivity extends Activity {
         for(Stocks stock: stocklist) {
             mCards.add(i, new CardBuilder(context, CardBuilder.Layout.MENU)
                     .setText(stock.getmSymbol())
-            );
+                    .setFootnote(stock.getmName()+" @ "+stock.getmExchangeMarket()));
             i++;
         }
     }

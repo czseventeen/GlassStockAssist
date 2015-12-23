@@ -4,11 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 
+
+import com.google.android.glass.touchpad.Gesture;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +31,9 @@ public class AddNewStockActivity extends Activity{
     private static final int SPEECH_REQUEST = 0;
     private static final String TAG =AddNewStockActivity.class.getSimpleName() ;
     protected static String SpokenText=null;
-    protected static Context context;
+    private static boolean DisplayingErrorMessage=false;
 //    private GestureDetector mGestureDetector;
-
-    protected static GlassStockWatcherAlertDialog alert;
+    private static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +52,8 @@ public class AddNewStockActivity extends Activity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
+        //Log.d(TAG, "onActivityResult triggered!!!!!!!!!!");
         context=this;
-        Log.d(TAG, "onActivityResult triggered!!!!!!!!!!");
         if (requestCode == SPEECH_REQUEST ) {
             //Log.d(TAG, "SPEECH_REQUEST Verified!!!!!!!!!!");
             if (resultCode == RESULT_OK) {
@@ -58,17 +63,16 @@ public class AddNewStockActivity extends Activity{
                 Log.d(TAG, "The SPOKENTEXT was---------> " + SpokenText);
                 //removing spaces to fit the HTTP protocol
                 SpokenText=SpokenText.replace(" ","");
-                Asyn_findSymbolsByName finder= new Asyn_findSymbolsByName();
+                findSymbolsByName_AsynTask finder= new findSymbolsByName_AsynTask();
                 finder.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, SpokenText);
                 //finder.execute(SpokenText);
                 //Kill the SPEECH_REQUEST activity
 
             }else{
-                Log.d(TAG, "RESULT NOT OK!!!!!!!!!!! result code is: "+resultCode);
-
+                finish();
+                //Log.d(TAG, "RESULT NOT OK!!!!!!!!!!! result code is: "+resultCode);
             }
         }
-        finish();
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -80,12 +84,14 @@ public class AddNewStockActivity extends Activity{
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "AddNewStockActivity is getting killed!!!!!!!!");
-        finish();
-        super.onDestroy();
+        if(!DisplayingErrorMessage) {
+            Log.d(TAG, "AddNewStockActivity is getting killed!!!!!!!!, The DisplayErrorMessage is:"+DisplayingErrorMessage);
+            finish();
+            super.onDestroy();
+        }
     }
 
-    public class Asyn_findSymbolsByName extends AsyncTask<String, Void, ArrayList<Stocks>> {
+    public class findSymbolsByName_AsynTask extends AsyncTask<String, Void, ArrayList<Stocks>> {
 
         @Override
         protected ArrayList<Stocks> doInBackground(String... params) {
@@ -99,32 +105,45 @@ public class AddNewStockActivity extends Activity{
             if(stocks.size()==0){
 //          Alert the user the name was not found and keep speech recognition running.
 
-                DialogInterface.OnClickListener onClickListener=new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.d(TAG, "+++++++CLICKED RECIVED!");
-                        alert.dismiss();
-
-                    }
-                };
-
-                alert=new GlassStockWatcherAlertDialog(context,
+                GlassStockWatcherAlertDialog alert=new GlassStockWatcherAlertDialog(context,
                         R.drawable.ic_warning_150,
                         R.string.no_stock_symbol_found,
-                        R.string.no_stock_symbol_found_footer,
-                        onClickListener);
+                        R.string.no_stock_symbol_found_footer);
+                alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        //Finishing the Speech Recognition Activity;
+                        finish();
+
+//                        Intent SpeechRecognitionIntent =new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+//                        SpeechRecognitionIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please say the name of the stock you wish to add:");
+//                        startActivityForResult(SpeechRecognitionIntent, SPEECH_REQUEST);
+                        Intent AddIntent = new Intent(getApplicationContext(), AddNewStockActivity.class);
+                        AddIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        AddIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    am.playSoundEffect(soundEffect);
+                        startActivity(AddIntent);
+                        DisplayingErrorMessage=false;
+                    }
+                });
+
                 alert.show();
+                DisplayingErrorMessage=true;
 
             }else if(stocks.size()>1){
+                //Finishing the Speech Recognition Activity;
+                finish();
                 //more than one stocks found, start a new activity that asks the user to select
-                Intent intent=new Intent(AddNewStockActivity.this, AddSelectionScreenActivity.class);
+                Intent intent=new Intent(getApplicationContext(), AddSelectionScreenActivity.class);
                 intent.putExtra(StockConstants.KEY_STOCK_PARCELABLE,stocks);
                 startActivity(intent);
             }else if(stocks.size()==1){
+                //Finishing the Speech Recognition Activity;
+                finish();
                 //There was only 1 match, update the StockList
-                Asyn_AddNewStockToList price_finder= new Asyn_AddNewStockToList();
-                price_finder.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,stocks.get(0));
-                //price_finder.execute(stocks.get(0));
+                AddNewStockToList_AsynTask addStockToList_AsynTask= new AddNewStockToList_AsynTask();
+                addStockToList_AsynTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, stocks.get(0));
+                //addStockToList_AsynTask.execute(stocks.get(0));
             }
 //            this.cancel(true);
         }
@@ -137,7 +156,7 @@ public class AddNewStockActivity extends Activity{
     * 2. The FindRealTimeData.findPriceBySymbol method will return a new Stock object with all the latest Price/Volume info.
     * 3. Using that info, add the new Stock to the LiveStockService.StockList
     * */
-    public static class Asyn_AddNewStockToList extends AsyncTask<Stocks, Void, Stocks>{
+    public static class AddNewStockToList_AsynTask extends AsyncTask<Stocks, Void, Stocks>{
         @Override
         protected Stocks doInBackground(Stocks... params) {
          //   android.os.Debug.waitForDebugger();

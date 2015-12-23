@@ -183,6 +183,7 @@ public class LiveStockService extends Service {
                 Stocks NewStock = FindRealTimeData.findPriceBySymbol(StockList.get(i).getmSymbol());
                 if(!NewStock.getmSymbol().equals("")) {
                     //Only update when the request comeback OK
+                    Log.d(TAG, "Updating stock price for :"+NewStock.getmName()+" to "+NewStock.getmCurrentPrice());
                     StockList.set(i, NewStock);
                 }
                 else{
@@ -190,8 +191,8 @@ public class LiveStockService extends Service {
                 }
                 try {
                     //Adding this delay to prevent queries to API from happening too fast
-                    Thread.sleep(100);
-                    Log.d(TAG, "Waiting for 0.1 second to prevent querying too fast for data");
+                    Thread.sleep(200);
+                    //Log.d(TAG, "Waiting for 0.2 second to prevent querying too fast for data");
                 } catch (InterruptedException e) {
                     Log.d(TAG, "Couldn't wait!!!!!!!!!!!!!!!!");
                 }

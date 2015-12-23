@@ -67,8 +67,8 @@ public class AddSelectionScreenActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "Clicked view at position " + position + " Going to Add: " + stocklist.get(position).getmName());
-                //Using the AsyncTask Asyn_AddNewStockToList to query the latest update on the particular stock, then add that stock to our Stock watchlist
-                AddNewStockActivity.Asyn_AddNewStockToList addNewStockTask=new AddNewStockActivity.Asyn_AddNewStockToList();
+                //Using the AsyncTask AddNewStockToList_AsynTask to query the latest update on the particular stock, then add that stock to our Stock watchlist
+                AddNewStockActivity.AddNewStockToList_AsynTask addNewStockTask=new AddNewStockActivity.AddNewStockToList_AsynTask();
                 addNewStockTask.execute(stocklist.get(position));
 
                 // Play sound.
